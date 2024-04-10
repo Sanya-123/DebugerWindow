@@ -17,12 +17,24 @@ public:
     explicit DebugerWindow(QWidget *parent = nullptr);
     ~DebugerWindow();
 
+    void saveSettings(QSettings *settings);
+    void restoreSettings(QSettings *settings);
+
+    static bool checkConditionHideByFile(DebugMessadge *msg, DebugerFilter filter);
+    static bool checkConditionHideByFunction(DebugMessadge *msg, DebugerFilter filter);
+    static bool checkConditionHideByLine(DebugMessadge *msg, DebugerFilter filter);
+    static bool checkConditionHideString(QString str, QString ref);
+//    static bool checkConditionHideByContext(DebugMessadge *msg, DebugerFilter filter);
+    static bool checkConditionHide(DebugMessadge *msg, QVector<DebugerFilter> *filters);
+
 public slots:
     void putMessadge(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+    void execFilters();
 
 private:
     Ui::DebugerWindow *ui;
     DebugerFiltersEditor filterEditor;
+    QVector<DebugerFilter> *filters;
 
 };
 

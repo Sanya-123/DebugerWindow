@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "debugerfiltermodel.h"
 #include "debugerfilter.h"
+#include <QSettings>
 
 namespace Ui {
 class DebugerFiltersEditor;
@@ -16,6 +17,11 @@ class DebugerFiltersEditor : public QDialog
 public:
     explicit DebugerFiltersEditor(QWidget *parent = nullptr);
     ~DebugerFiltersEditor();
+
+    void saveSettings(QSettings *settings);
+    void restoreSettings(QSettings *settings);
+
+    QVector<DebugerFilter> * getFilters();
 
 private slots:
     void on_pushButton_addFilter_clicked();

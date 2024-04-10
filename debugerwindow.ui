@@ -59,6 +59,7 @@
      <string>option</string>
     </property>
     <addaction name="actionfilters"/>
+    <addaction name="actionupdate"/>
    </widget>
    <addaction name="menuoption"/>
   </widget>
@@ -69,6 +70,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionupdate">
+   <property name="text">
+    <string>update</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
  </widget>
