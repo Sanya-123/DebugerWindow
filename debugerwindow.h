@@ -23,6 +23,7 @@ public:
     static bool checkConditionHideByFile(DebugMessadge *msg, DebugerFilter filter);
     static bool checkConditionHideByFunction(DebugMessadge *msg, DebugerFilter filter);
     static bool checkConditionHideByLine(DebugMessadge *msg, DebugerFilter filter);
+    static bool checkConditionHideByText(DebugMessadge *msg, DebugerFilter filter);
     static bool checkConditionHideString(QString str, QString ref);
 //    static bool checkConditionHideByContext(DebugMessadge *msg, DebugerFilter filter);
     static bool checkConditionHide(DebugMessadge *msg, QVector<DebugerFilter> *filters);

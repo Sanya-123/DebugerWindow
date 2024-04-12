@@ -36,6 +36,13 @@ void DebugerFiltersEditor::saveSettings(QSettings *settings)
         settings->setValue("enWarnings", fiter.enWarnings);
         settings->setValue("enCritical", fiter.enCritical);
         settings->setValue("enFatal", fiter.enFatal);
+
+        settings->setValue("file", fiter.file);
+        settings->setValue("function", fiter.function);
+        settings->setValue("lineBegin", fiter.lineBegin);
+        settings->setValue("lineEnd", fiter.lineEnd);
+        settings->setValue("name", fiter.name);
+        settings->setValue("text", fiter.text);
     }
     settings->endArray();
 }
@@ -46,6 +53,7 @@ void DebugerFiltersEditor::restoreSettings(QSettings *settings)
     int sizeFilters = settings->beginReadArray("filters");
     for(int i = 0; i < sizeFilters; i++)
     {
+        settings->setArrayIndex(i);
         DebugerFilter fiter;
         fiter.en = settings->value("en").toBool();
         fiter.enDebug = settings->value("enDebug").toBool();
@@ -53,6 +61,14 @@ void DebugerFiltersEditor::restoreSettings(QSettings *settings)
         fiter.enWarnings = settings->value("enWarnings").toBool();
         fiter.enCritical = settings->value("enCritical").toBool();
         fiter.enFatal = settings->value("enFatal").toBool();
+
+        fiter.file = settings->value("file").toString();
+        fiter.function = settings->value("function").toString();
+        fiter.lineBegin = settings->value("lineBegin").toInt();
+        fiter.lineEnd = settings->value("lineEnd").toInt();
+        fiter.name = settings->value("name").toString();
+        fiter.text = settings->value("text").toString();
+
         filters.append(fiter);
     }
     settings->endArray();

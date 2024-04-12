@@ -9,6 +9,7 @@ DebugerWindow::DebugerWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->actionfilters, SIGNAL(triggered(bool)), &filterEditor, SLOT(show()));
     connect(ui->actionupdate, SIGNAL(triggered(bool)), this, SLOT(execFilters()));
+    connect(&filterEditor, SIGNAL(finished(int)), this, SLOT(execFilters()));
     filters = filterEditor.getFilters();
 }
 
@@ -29,6 +30,8 @@ void DebugerWindow::restoreSettings(QSettings *settings)
     settings->beginGroup("filters");
     filterEditor.restoreSettings(settings);
     settings->endGroup();
+
+    execFilters();
 }
 
 bool DebugerWindow::checkConditionHideByFile(DebugMessadge *msg, DebugerFilter filter)
@@ -75,6 +78,18 @@ bool DebugerWindow::checkConditionHideByLine(DebugMessadge *msg, DebugerFilter f
     return lineCondition;
 }
 
+bool DebugerWindow::checkConditionHideByText(DebugMessadge *msg, DebugerFilter filter)
+{
+    bool functionCondition = true;
+
+    if(!filter.text.isEmpty())
+    {
+        functionCondition = checkConditionHideString(msg->getFunction(), filter.text);
+    }
+
+    return functionCondition;
+}
+
 bool DebugerWindow::checkConditionHideString(QString str, QString ref)
 {
     return str.contains(ref);
@@ -95,8 +110,9 @@ bool DebugerWindow::checkConditionHide(DebugMessadge *msg, QVector<DebugerFilter
             bool conFile = checkConditionHideByFile(msg, _filter);
             bool conFunction = checkConditionHideByFunction(msg, _filter);
             bool conLine = checkConditionHideByLine(msg, _filter);
+            bool conText = checkConditionHideByText(msg, _filter);
 
-            if(conFile && conFunction && conLine)
+            if(conFile && conFunction && conLine && conText)
             {
                 switch(msg->getMsgType())
                 {
@@ -142,6 +158,10 @@ void DebugerWindow::putMessadge(QtMsgType type, const QMessageLogContext &contex
 
     //Finally adding the itemWidget to the list
     ui->listWidget_messadges->setItemWidget (listWidgetItem, theWidgetItem);
+
+    //check hiden condition
+    bool hiden = checkConditionHide(theWidgetItem, filters);
+    listWidgetItem->setHidden(hiden);
 }
 
 void DebugerWindow::execFilters()
