@@ -32,10 +32,27 @@ public slots:
     void putMessadge(QtMsgType type, const QMessageLogContext &context, const QString &msg);
     void execFilters();
 
+private slots:
+    void addNewMessadges(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+    void addNewMessadges();
+
+signals:
+    //local signal
+    void newMessadge();
+
 private:
     Ui::DebugerWindow *ui;
     DebugerFiltersEditor filterEditor;
     QVector<DebugerFilter> *filters;
+    struct NewMessadge{
+        QtMsgType type; /*QMessageLogContext context; */ QString msg;
+        //contextt
+        QByteArray file;
+        int line;
+        QByteArray function;
+        QByteArray category;
+    };
+    QVector<struct NewMessadge> newMessadges;
 
 };
 

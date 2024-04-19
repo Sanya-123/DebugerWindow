@@ -7,9 +7,11 @@ DebugerWindow::DebugerWindow(QWidget *parent) :
     ui(new Ui::DebugerWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("DebugerWindow");
     connect(ui->actionfilters, SIGNAL(triggered(bool)), &filterEditor, SLOT(show()));
     connect(ui->actionupdate, SIGNAL(triggered(bool)), this, SLOT(execFilters()));
     connect(&filterEditor, SIGNAL(finished(int)), this, SLOT(execFilters()));
+    connect(this, SIGNAL(newMessadge()), this, SLOT(addNewMessadges()), Qt::QueuedConnection);
     filters = filterEditor.getFilters();
 }
 
@@ -144,6 +146,31 @@ bool DebugerWindow::checkConditionHide(DebugMessadge *msg, QVector<DebugerFilter
 
 void DebugerWindow::putMessadge(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    struct NewMessadge newMsg;
+    newMsg.type = type;
+//    newMsg.context = context;
+    newMsg.file = QByteArray(context.file);
+    newMsg.line = context.line;
+    newMsg.function = QByteArray(context.function);
+    newMsg.category = QByteArray(context.category);
+    newMsg.msg = msg;
+    newMessadges.append(newMsg);
+    emit newMessadge();
+}
+
+void DebugerWindow::execFilters()
+{
+    for(int i = 0; i < ui->listWidget_messadges->count(); i++)
+    {
+        DebugMessadge *theWidgetItem = (DebugMessadge *)ui->listWidget_messadges->itemWidget(
+                    ui->listWidget_messadges->item(i));
+        bool hiden = checkConditionHide(theWidgetItem, filters);
+        ui->listWidget_messadges->item(i)->setHidden(hiden);
+    }
+}
+
+void DebugerWindow::addNewMessadges(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
     //Creating a new list widget item whose parent is the listwidget itself
     QListWidgetItem *listWidgetItem = new QListWidgetItem(ui->listWidget_messadges);
 
@@ -164,14 +191,15 @@ void DebugerWindow::putMessadge(QtMsgType type, const QMessageLogContext &contex
     listWidgetItem->setHidden(hiden);
 }
 
-void DebugerWindow::execFilters()
+void DebugerWindow::addNewMessadges()
 {
-    ui->listWidget_messadges;
-    for(int i = 0; i < ui->listWidget_messadges->count(); i++)
+    while(newMessadges.size() > 0)
     {
-        DebugMessadge *theWidgetItem = (DebugMessadge *)ui->listWidget_messadges->itemWidget(
-                    ui->listWidget_messadges->item(i));
-        bool hiden = checkConditionHide(theWidgetItem, filters);
-        ui->listWidget_messadges->item(i)->setHidden(hiden);
+        struct NewMessadge msg = newMessadges[0];
+        newMessadges.remove(0);
+
+        QMessageLogContext context(msg.file.data(), msg.line, msg.function.data(), msg.category.data());
+
+        addNewMessadges(msg.type, context, msg.msg);
     }
 }
