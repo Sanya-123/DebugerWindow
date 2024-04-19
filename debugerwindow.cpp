@@ -186,6 +186,12 @@ void DebugerWindow::addNewMessadges(QtMsgType type, const QMessageLogContext &co
     //Finally adding the itemWidget to the list
     ui->listWidget_messadges->setItemWidget (listWidgetItem, theWidgetItem);
 
+
+    if(ui->checkBox_enAutoscroll->isChecked())
+    {
+        ui->listWidget_messadges->scrollToBottom();
+    }
+
     //check hiden condition
     bool hiden = checkConditionHide(theWidgetItem, filters);
     listWidgetItem->setHidden(hiden);
