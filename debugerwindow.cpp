@@ -86,7 +86,7 @@ bool DebugerWindow::checkConditionHideByText(DebugMessadge *msg, DebugerFilter f
 
     if(!filter.text.isEmpty())
     {
-        functionCondition = checkConditionHideString(msg->getFunction(), filter.text);
+        functionCondition = checkConditionHideString(msg->getMsg(), filter.text);
     }
 
     return functionCondition;

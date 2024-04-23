@@ -77,3 +77,8 @@ int DebugMessadge::getLine() const
 {
     return line;
 }
+
+QString DebugMessadge::getMsg()
+{
+    return ui->lineEdit_msg->text();
+}

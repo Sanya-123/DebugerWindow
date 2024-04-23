@@ -19,6 +19,7 @@ public:
     QString getFile() const;
     QString getFunction() const;
     int getLine() const;
+    QString getMsg();
 
 private:
     Ui::DebugMessadge *ui;
